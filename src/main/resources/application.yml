@@ -1,2 +1,4 @@
 hono:
-  config_tenant_id: "demo_tenant"
+  tenant-id: DEFAULT_TENANT
+  registry:
+    url: http://localhost:28080

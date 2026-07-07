@@ -10,5 +10,5 @@ public class DeviceRegisterRequest {
     private String deviceId;
     private String name;
     private String description;
-    private Boolean enabled;  // 可选，默认为 true
+    private Boolean enabled = true;  // 可选，默认为 true
 }

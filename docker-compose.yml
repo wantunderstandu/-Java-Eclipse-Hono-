@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  qpid:
+    image: eclipse-hono/hono-qpid-dispatch-router:latest
+    container_name: hono-qpid
+    environment:
+      - QDROUTERD_CONFIG=/etc/qpid/qpid.json
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - hono-net
+
+  registry:
+    image: eclipse-hono/hono-service-device-registry-mem:latest
+    container_name: hono-registry
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - HONO_REGISTRY_AMQP_HOST=qpid
+      - HONO_REGISTRY_AMQP_PORT=5672
+    ports:
+      - "28080:28080"
+    depends_on:
+      - qpid
+    networks:
+      - hono-net
+
+  auth:
+    image: eclipse-hono/hono-service-auth:latest
+    container_name: hono-auth
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - HONO_AUTH_AMQP_HOST=qpid
+      - HONO_AUTH_AMQP_PORT=5672
+    depends_on:
+      - qpid
+    networks:
+      - hono-net
+
+  http-adapter:
+    image: eclipse-hono/hono-adapter-http:latest
+    container_name: hono-http-adapter
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - HONO_HTTP_AUTH_HOST=auth
+      - HONO_HTTP_AUTH_PORT=28080
+      - HONO_HTTP_REGISTRY_HOST=registry
+      - HONO_HTTP_REGISTRY_PORT=28080
+      - HONO_HTTP_BIND_ADDRESS=0.0.0.0
+      - HONO_HTTP_INSECURE_PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth
+      - registry
+    networks:
+      - hono-net
+
+networks:
+  hono-net:
+    driver: bridge

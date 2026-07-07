@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class CommandRequest {
     private String commandName;
-    private String contentType;
+    private String contentType = "application/json";
     private Object payload;      // 可以是 JSON 对象或字符串
-    private Integer timeoutSeconds; // 可选，默认 10
+    private Integer timeoutSeconds = 10; // 可选，默认 10
 }
