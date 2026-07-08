@@ -18,7 +18,6 @@ public class R<T> {
         this.data = data;
     }
 
-    // ---------- 静态工厂方法 ----------
     public static <T> R<T> success(String message, T data) {
         return new R<>(true, message, data);
     }
