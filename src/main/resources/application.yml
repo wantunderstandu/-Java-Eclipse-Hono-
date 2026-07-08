@@ -1,4 +1,15 @@
-hono:
-  tenant-id: DEFAULT_TENANT
-  registry:
-    url: http://localhost:28080
+
+
+spring:
+  datasource:
+    url: jdbc:mysql://43.241.50.19:57788/Hono?allowMultiQueries=true
+    username: Hono
+    password: Hono123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+mqtt:
+  broker: tcp://localhost:1883
+  client-id: hono-java-backend

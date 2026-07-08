@@ -6,30 +6,29 @@ import com.example.hono_java.modal.dto.request.CredentialConfigRequest;
 import com.example.hono_java.modal.dto.request.DeviceRegisterRequest;
 import com.example.hono_java.modal.dto.response.CommandResultData;
 import com.example.hono_java.modal.dto.response.DeviceListData;
-import com.example.hono_java.service.HonoDeviceService;
 import com.example.hono_java.util.R;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import com.example.hono_java.service.DeviceService;
 
 @RestController
 @RequestMapping("/api/devices")
 @Validated
 public class DeviceController {
 
-    private final HonoDeviceService honoDeviceService;
+    private final DeviceService deviceService;
 
-    public DeviceController(HonoDeviceService honoDeviceService) {
-        this.honoDeviceService = honoDeviceService;
+    public DeviceController(DeviceService deviceService) {
+        this.deviceService = deviceService;
     }
-
     // 1. 设备注册
     @PostMapping
     public Mono<ResponseEntity<R<Object>>> registerDevice(
             @RequestBody DeviceRegisterRequest request
     ) {
-        return honoDeviceService.registerDevice(request)
+        return deviceService.registerDevice(request)
                 .map(data -> ResponseEntity.ok(R.success("设备注册成功", (Object) data)))
                 .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().body(R.fail(e.getMessage()))));
     }
@@ -40,7 +39,7 @@ public class DeviceController {
             @PathVariable String deviceId,
             @RequestBody CredentialConfigRequest request
     ) {
-        return honoDeviceService.configureCredentials(deviceId, request)
+        return deviceService.configureCredentials(deviceId, request)
                 .map(data -> ResponseEntity.ok(R.success("设备凭证配置成功", (Object) data)))
                 .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().body(R.fail(e.getMessage()))));
     }
@@ -51,7 +50,7 @@ public class DeviceController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        return honoDeviceService.listDevices(page, size)
+        return deviceService.listDevices(page, size)
                 .map(data -> ResponseEntity.ok(R.success("查询成功", data)))
                 .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().body(R.fail(e.getMessage()))));
     }
@@ -62,7 +61,7 @@ public class DeviceController {
             @PathVariable String deviceId,
             @RequestBody CommandRequest request
     ) {
-        return honoDeviceService.sendCommand(deviceId, request)
+        return deviceService.sendCommand(deviceId, request)
                 .map(data -> ResponseEntity.ok(R.success("命令下发请求已提交", data)))
                 .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().body(R.fail(e.getMessage()))));
     }
